@@ -337,7 +337,7 @@ def hog_feature_array(orient, pix_per_cell, cell_per_block):
 
 # Main, process the videos
 def vehicle_detection_main():
-
+    # TODO Go to "29. HOG Classify", copy-paste line 70-end here to test SVM training
 
     # Find cars with "35. Hog Sub-sampling Window Search" code
     img = mpimg.imread('test_images/test1.jpg')
