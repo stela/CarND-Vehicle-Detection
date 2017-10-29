@@ -1,12 +1,10 @@
 import numpy as np
 import cv2
-import glob
 from moviepy.editor import VideoFileClip
 from functools import partial
 import os
 import glob
 import time
-from skimage.feature import hog
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from sklearn.model_selection import train_test_split
@@ -17,9 +15,6 @@ from skimage.feature import hog
 orient = 9
 pix_per_cell = 8
 cell_per_block = 2
-
-
-
 
 
 # From "34. Search and Classify"
@@ -157,13 +152,14 @@ def color_hist(img, nbins=32):  # bins_range=(0, 256)
     # Return the individual histograms, bin_centers and feature vector
     return hist_features
 
+
 # From "34. Search and Classify"
 # Define a function to extract features from a list of images
 # Have this function call bin_spatial() and color_hist()
 def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
-                        hist_bins=32, orient=9,
-                        pix_per_cell=8, cell_per_block=2, hog_channel=0,
-                        spatial_feat=True, hist_feat=True, hog_feat=True):
+                     hist_bins=32, orient=9,
+                     pix_per_cell=8, cell_per_block=2, hog_channel=0,
+                     spatial_feat=True, hist_feat=True, hog_feat=True):
     # Create a list to append feature vectors to
     features = []
     # Iterate through the list of images
@@ -185,24 +181,24 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
                 feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
         else: feature_image = np.copy(image)
 
-        if spatial_feat == True:
+        if spatial_feat:
             spatial_features = bin_spatial(feature_image, size=spatial_size)
             file_features.append(spatial_features)
-        if hist_feat == True:
+        if hist_feat:
             # Apply color_hist()
             hist_features = color_hist(feature_image, nbins=hist_bins)
             file_features.append(hist_features)
-        if hog_feat == True:
-        # Call get_hog_features() with vis=False, feature_vec=True
+        if hog_feat:
+            # Call get_hog_features() with vis=False, feature_vec=True
             if hog_channel == 'ALL':
                 hog_features = []
                 for channel in range(feature_image.shape[2]):
-                    hog_features.append(get_hog_features(feature_image[:,:,channel],
+                    hog_features.append(get_hog_features(feature_image[:, :, channel],
                                         orient, pix_per_cell, cell_per_block,
                                         vis=False, feature_vec=True))
                 hog_features = np.ravel(hog_features)
             else:
-                hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
+                hog_features = get_hog_features(feature_image[:, :, hog_channel], orient,
                             pix_per_cell, cell_per_block, vis=False, feature_vec=True)
             # Append the new feature vector to the features list
             file_features.append(hog_features)
@@ -219,13 +215,13 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
 def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None],
                  xy_window=(64, 64), xy_overlap=(0.5, 0.5)):
     # If x and/or y start/stop positions not defined, set to image size
-    if x_start_stop[0] == None:
+    if x_start_stop[0] is None:
         x_start_stop[0] = 0
-    if x_start_stop[1] == None:
+    if x_start_stop[1] is None:
         x_start_stop[1] = img.shape[1]
-    if y_start_stop[0] == None:
+    if y_start_stop[0] is None:
         y_start_stop[0] = 0
-    if y_start_stop[1] == None:
+    if y_start_stop[1] is None:
         y_start_stop[1] = img.shape[0]
     # Compute the span of the region to be searched
     xspan = x_start_stop[1] - x_start_stop[0]
@@ -256,6 +252,7 @@ def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None],
             window_list.append(((startx, starty), (endx, endy)))
     # Return the list of windows
     return window_list
+
 
 # From "34. Search and Classify"
 # Define a function to draw bounding boxes
@@ -350,13 +347,13 @@ def hog_feature_array(orient, pix_per_cell, cell_per_block):
 # TODO this method just exercises the code up until now, adapt for final assignment
 def predict_cars():
     # TODO: Tweak these parameters and see how the results change.
-    colorspace = 'RGB'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+    colorspace = 'YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     orient = 9
     pix_per_cell = 8
     cell_per_block = 2
-    hog_channel = 0  # Can be 0, 1, 2, or "ALL"
+    hog_channel = 'ALL'  # Can be 0, 1, 2, or "ALL"
 
-    cars = glob.glob('vehicles/GTI*/*.png')
+    cars = glob.glob('vehicles/*/*.png')
     notcars = glob.glob('non-vehicles/**/*.png')
     t = time.time()
     car_features = extract_features(cars, color_space=colorspace, orient=orient,
@@ -403,11 +400,41 @@ def predict_cars():
     print('For these', n_predict, 'labels: ', y_test[0:n_predict])
     t2 = time.time()
     print(round(t2 - t, 5), 'Seconds to predict', n_predict, 'labels with SVC')
+    return svc, X_scaler
+
+
+# Process each video frame
+def process_image(original_img, svc, X_scaler):
+    ystart = 400
+    ystop = 656
+    scale = 1.5
+    spatial_size = (32, 32)
+    hist_bins = 32
+    draw_img = find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+
+    return draw_img
+
+
+# For each video, process each frame and output the resulting video
+def process_video(input, output, process_image_fun):
+    clip = VideoFileClip(input)
+    # Uncomment to generate small quick range, range in seconds (start, end)
+    # clip = clip.subclip(38, 41)
+    vid_clip = clip.fl_image(process_image_fun)
+    vid_clip.write_videofile(output, audio=False)
+    return
 
 
 # Main, process the videos
 def vehicle_detection_main():
-    predict_cars()
+    # TODO modify predict_cars to just return a trained SVC
+    svc, X_scaler = predict_cars()
+
+    part_process_image = partial(process_image, svc=svc, X_scaler=X_scaler)
+    process_video('test_video.mp4', 'output_images/test_video_out.mp4', part_process_image)
+
+    part_process_image = partial(process_image, svc = svc)
+    process_video('project_video.mp4', 'output_images/project_video_out.mp4', part_process_image)
 
     # Find cars with "35. Hog Sub-sampling Window Search" code
     img = mpimg.imread('test_images/test1.jpg')
