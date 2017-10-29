@@ -430,26 +430,12 @@ def vehicle_detection_main():
     # TODO modify predict_cars to just return a trained SVC
     svc, X_scaler = predict_cars()
 
+    # TODO add inter-frame-context for heatmap etc
     part_process_image = partial(process_image, svc=svc, X_scaler=X_scaler)
     process_video('test_video.mp4', 'output_images/test_video_out.mp4', part_process_image)
 
-    part_process_image = partial(process_image, svc = svc)
+    part_process_image = partial(process_image, svc=svc, X_scaler=X_scaler)
     process_video('project_video.mp4', 'output_images/project_video_out.mp4', part_process_image)
-
-    # Find cars with "35. Hog Sub-sampling Window Search" code
-    img = mpimg.imread('test_images/test1.jpg')
-    ystart = 400
-    ystop = 656
-    scale = 1.5
-    out_img = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size,
-                        hist_bins)
-
-    # Process the videos
-    part_process_image = partial(process_image, context=interframe_context)
-    process_video('test_video.mp4', 'output_images/project_video_out.mp4', part_process_image)
-
-    part_process_image = partial(process_image, context=interframe_context)
-    process_video('project_video.mp4', 'output_images/challenge_video_out.mp4', part_process_image)
 
 
 if __name__ == "__main__":
