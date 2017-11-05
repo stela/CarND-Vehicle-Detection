@@ -326,11 +326,15 @@ def process_image(original_img, svc, X_scaler):
         find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient,
                   pix_per_cell, cell_per_block, spatial_size, hist_bins)
 
-    heat = np.zeros_like(original_img[:0, :, 0]).astype(np.float)
+    # Heatmap processing from "37. Multiple Detections & False Positives"
+    heat = np.zeros_like(original_img[:, :, 0]).astype(np.float)
     heat = add_heat(heat, box_list)
     heat = apply_threshold(heat, 1)
-    heat = np.clip(heat, 0, 255)
-    labels = label(heat)
+    #cv2.imshow("heat", heat)
+    #cv2.waitKey(200000)
+
+    heatmap = np.clip(heat, 0, 255)
+    labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
     return draw_img
