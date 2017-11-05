@@ -315,7 +315,7 @@ def draw_labeled_bboxes(img, labels):
 
 
 # Process each video frame
-def process_image(original_img, svc, X_scaler):
+def process_image(original_img, svc, X_scaler, heat):
     ystart = 400
     ystop = 656
     # TODO scan with multiple scales if necessary
@@ -327,17 +327,23 @@ def process_image(original_img, svc, X_scaler):
                   pix_per_cell, cell_per_block, spatial_size, hist_bins)
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
-    heat = np.zeros_like(original_img[:, :, 0]).astype(np.float)
     heat = add_heat(heat, box_list)
     heat = apply_threshold(heat, 1)
-    #cv2.imshow("heat", heat)
-    #cv2.waitKey(200000)
+    # cv2.imshow("heat", heat)
+    # cv2.waitKey(200000)
 
     heatmap = np.clip(heat, 0, 255)
+    # TODO replace with working decaying-average or similar
+    heat = heat * 0.8
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
     return draw_img
+
+
+def create_heatmap(shape):
+    heat = np.zeros(shape).astype(np.float)
+    return heat
 
 
 # For each video, process each frame and output the resulting video
@@ -345,6 +351,9 @@ def process_video(input, output, process_image_fun):
     clip = VideoFileClip(input)
     # Uncomment to generate small quick range, range in seconds (start, end)
     # clip = clip.subclip(38, 41)
+    heatmap = create_heatmap((clip.h, clip.w))
+    process_image_fun = partial(process_image_fun, heat=heatmap)
+
     vid_clip = clip.fl_image(process_image_fun)
     vid_clip.write_videofile(output, audio=False)
     return
