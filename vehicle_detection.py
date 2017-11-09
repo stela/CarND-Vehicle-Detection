@@ -327,14 +327,14 @@ def process_image(original_img, svc, X_scaler, heat):
                   pix_per_cell, cell_per_block, spatial_size, hist_bins)
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
-    heat = add_heat(heat, box_list)
+    add_heat(heat, box_list)
     heat = apply_threshold(heat, 1)
     # cv2.imshow("heat", heat)
     # cv2.waitKey(200000)
 
     heatmap = np.clip(heat, 0, 255)
-    # TODO replace with working decaying-average or similar
-    heat = heat * 0.8
+    # Simplified moving-average
+    heat *= 0.7
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
