@@ -313,12 +313,12 @@ def draw_labeled_bboxes(img, labels):
 
 # Process each video frame
 def process_image(original_img, svc, X_scaler, heat):
-    ystart = 400
+    ystart = 370
     ystop = 656
     spatial_size = (32, 32)
     hist_bins = 32
     all_scales_boxes = []
-    for scale in [1, 1.5, 3, 5, 8, 13]:
+    for scale in [1, 1.5, 2, 3.5, 6]:
         box_list =\
             find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient,
                       pix_per_cell, cell_per_block, spatial_size, hist_bins)
