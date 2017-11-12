@@ -140,7 +140,6 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
 # From "35. Hog Sub-sampling Window Search"
 # Define a single function that can extract features using hog sub-sampling and make predictions
 def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
-    draw_img = np.copy(img)
     img = img.astype(np.float32) / 255
 
     img_tosearch = img[ystart:ystop, :, :]
@@ -206,9 +205,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
 
                 box = ((xbox_left, ytop_draw + ystart), (xbox_left + win_draw, ytop_draw + win_draw + ystart))
                 box_list.append(box)
-                cv2.rectangle(draw_img, *box, (0, 0, 255), 6)
-    # TODO remove draw_img if unused later by caller
-    return draw_img, box_list
+    return box_list
 
 
 # From "40. Tips and Tricks for the Project"
@@ -318,17 +315,18 @@ def draw_labeled_bboxes(img, labels):
 def process_image(original_img, svc, X_scaler, heat):
     ystart = 400
     ystop = 656
-    # TODO scan with multiple scales if necessary
-    scale = 1.5
     spatial_size = (32, 32)
     hist_bins = 32
-    draw_img_multiboxes, box_list =\
-        find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient,
-                  pix_per_cell, cell_per_block, spatial_size, hist_bins)
+    all_scales_boxes = []
+    for scale in [1, 1.5, 3, 5, 8, 13]:
+        box_list =\
+            find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient,
+                      pix_per_cell, cell_per_block, spatial_size, hist_bins)
+        all_scales_boxes.extend(box_list)
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
-    add_heat(heat, box_list)
-    heat = apply_threshold(heat, 1)
+    add_heat(heat, all_scales_boxes)
+    heat = apply_threshold(heat, 1.5)
     # cv2.imshow("heat", heat)
     # cv2.waitKey(200000)
 
