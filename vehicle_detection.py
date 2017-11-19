@@ -2,10 +2,8 @@ import numpy as np
 import cv2
 from moviepy.editor import VideoFileClip
 from functools import partial
-import os
 import glob
 import time
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
@@ -115,8 +113,9 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
                                         vis=False, feature_vec=True))
                 hog_features = np.ravel(hog_features)
             else:
-                hog_features = get_hog_features(feature_image[:, :, hog_channel], orient,
-                            pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+                hog_features =\
+                    get_hog_features(feature_image[:, :, hog_channel], orient,
+                                     pix_per_cell, cell_per_block, vis=False, feature_vec=True)
             # Append the new feature vector to the features list
             file_features.append(hog_features)
         features.append(np.concatenate(file_features))
@@ -208,16 +207,8 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
     return box_list
 
 
-# From "40. Tips and Tricks for the Project"
-# TODO where to use this method from?
-def hog_feature_array(orient, pix_per_cell, cell_per_block):
-    hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell),
-        cells_per_block=(cell_per_block, cell_per_block), visualise=False, feature_vector=False)
-
-
 # From "29. HOG Classify" with modifications
 def predict_cars():
-    # TODO: Tweak these parameters and see how the results change.
     colorspace = 'YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     orient = 9
     pix_per_cell = 8
@@ -254,7 +245,7 @@ def predict_cars():
     print('Using:', orient, 'orientations', pix_per_cell,
           'pixels per cell and', cell_per_block, 'cells per block')
     print('Feature vector length:', len(X_train[0]))
-    # TODO if tuning needed, see "27. Parameter tuning"
+    # for further tuning possibilities, see "27. Parameter tuning"
     # Use a linear SVC
     svc = LinearSVC()
     # Check the training time for the SVC
@@ -326,15 +317,11 @@ def process_image(original_img, svc, X_scaler, heat):
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
     add_heat(heat, all_scales_boxes)
-    # TODO remove me:
-    # th=1.5, decay=0.9, scale in [1.5, 2, 3.5, 6]: bit white car dropout, plenty false positives left
     heat = apply_threshold(heat, 3)
-    # cv2.imshow("heat", heat)
-    # cv2.waitKey(200000)
-
     heatmap = np.clip(heat, 0, 255)
     # Simple moving-average
     heat *= 0.9
+
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
@@ -361,10 +348,8 @@ def process_video(input, output, process_image_fun):
 
 # Main, process the videos
 def vehicle_detection_main():
-    # TODO modify predict_cars to just return a trained SVC
     svc, X_scaler = predict_cars()
 
-    # TODO add inter-frame-context for heatmap etc
     part_process_image = partial(process_image, svc=svc, X_scaler=X_scaler)
     process_video('test_video.mp4', 'output_images/test_video_out.mp4', part_process_image)
 
