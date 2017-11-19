@@ -35,7 +35,7 @@ You're reading it!
 
 The complete implementation is in the file [vehicle_detection.py](vehicle_detection.py). Any functions or line numbers referred to below are in that file unless stated otherwise.
 
-The code for this step is contained in the [find_cars()](vehicle_detection.py#L166-169) method.  
+The code for this step is contained in the [find_cars()](vehicle_detection.py#L166-L169) method.  
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
