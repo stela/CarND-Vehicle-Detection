@@ -10,8 +10,6 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[vehicle_image]: ./output_images/sample_vehicle.jpg?s=256
-[non_vehicle_image]: ./output_images/sample_non_vehicle.jpg?s=256
 [image2]: ./examples/HOG_example.jpg
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
@@ -40,11 +38,11 @@ The actual HOG features are computed in the [get_hog_features()](vehicle_detecti
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-![vehicle image][vehicle_image]
+<img src="output_images/sample_vehicle.jpg" width="256" height="256">
 
 _Vehicle Image_
 
-![non-vehicle image][non_vehicle_image]
+<img src="output_images/sample_non_vehicle.jpg" width="256" height="256">
 
 _Non-Vehicle Image_
 
