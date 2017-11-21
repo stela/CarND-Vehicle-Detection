@@ -38,22 +38,20 @@ The actual HOG features are computed in the [get_hog_features()](vehicle_detecti
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-<img src="output_images/sample_vehicle.jpg" width="256" height="256"><br />
+<img src="output_images/sample_vehicle.jpg" alt="car" width="256" height="256"><br />
 _Vehicle Image_
 
-<img src="output_images/sample_non_vehicle.jpg" width="256" height="256"><br />
+<img src="output_images/sample_non_vehicle.jpg" alt="non-car" width="256" height="256"><br />
 _Non-Vehicle Image_
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  Using the `YCrCb` color space, `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)` appeared to give the best results when processing the test video.
 
-Here is an example using the the above parameters:
-
-
-![alt text][image2]
+Here is an example using the the above parameters:<br />
+<img src="output_images/hog.jpg" alt="per-channel HOG images" >
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters but after selecting the YCrCb color space, I couldn't find better values for the other parameters than the above, which I believe are similar to those given in the lecture materials.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
