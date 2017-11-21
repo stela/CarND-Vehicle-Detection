@@ -38,17 +38,15 @@ The actual HOG features are computed in the [get_hog_features()](vehicle_detecti
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-<img src="output_images/sample_vehicle.jpg" width="256" height="256">
-
+<img src="output_images/sample_vehicle.jpg" width="256" height="256"><br />
 _Vehicle Image_
 
-<img src="output_images/sample_non_vehicle.jpg" width="256" height="256">
-
+<img src="output_images/sample_non_vehicle.jpg" width="256" height="256"><br />
 _Non-Vehicle Image_
 
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
+I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  Using the `YCrCb` color space, `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)` appeared to give the best results when processing the test video.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the the above parameters:
 
 
 ![alt text][image2]
