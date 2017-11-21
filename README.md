@@ -51,19 +51,17 @@ Here is an example using the the above parameters:<br />
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters but after selecting the YCrCb color space, I couldn't find better values for the other parameters than the above, which I believe are similar to those given in the lecture materials.
+I tried various combinations of parameters but after selecting the YCrCb color space, I couldn't find better values for the other parameters than the above, which I believe are similar to those given in the course materials.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I trained a linear SVM using `LinearSVC().fit(X_train, y_train)`, see [predict_cars()](vehicle_detection.py#L249-L255). As input (X_train) a subset of the the labelled vehicles (label=1) and non-vehicles (label=0) were used. Features used were (as described above) HOG features for all the channels plus spatial features plus color histograms. The feature extraction is performed in [extract_features()](vehicle_detection.py#L70-L123).
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
-
-![alt text][image3]
+I searched the area 370<=y<656. For simplicity, the whole area was scanned for all the scales used, which were 1.5, 2, 3.5 and 6, see [process_image()](vehicle_detection.py#L305-L328). This was probably not optimal for performance, but didn't seem to be the cause of much false positives at least. I started with the Fibonacci sequence since the golden ratio appears "everywhere" in nature, then I tweaked the numbers by trial-and-error looking at the final output video.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 

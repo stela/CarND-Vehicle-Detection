@@ -116,7 +116,7 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
                 hog_features =\
                     get_hog_features(feature_image[:, :, hog_channel], orient,
                                      pix_per_cell, cell_per_block, vis=False, feature_vec=True)
-            # Append the new feature vector to the features list
+            # Append the new feature vector to the features list, MUST match feature set chosen in find_cars()
             file_features.append(hog_features)
         features.append(np.concatenate(file_features))
     # Return list of feature vectors
@@ -191,7 +191,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
             spatial_features = bin_spatial(subimg, size=spatial_size)
             hist_features = color_hist(subimg, nbins=hist_bins)
 
-            # Scale features and make a prediction
+            # Scale features and make a prediction, MUST match feature set chosen in extract_features()
             test_features = X_scaler.transform(
                 np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
             # test_features = X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))
