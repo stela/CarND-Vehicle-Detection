@@ -61,13 +61,17 @@ I trained a linear SVM using `LinearSVC().fit(X_train, y_train)`, see [predict_c
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I searched the area 370<=y<656. For simplicity, the whole area was scanned for all the scales used, which were 1.5, 2, 3.5 and 6, see [process_image()](vehicle_detection.py#L305-L328). This was probably not optimal for performance, but didn't seem to be the cause of much false positives at least. I started with the Fibonacci sequence since the golden ratio appears "everywhere" in nature, then I tweaked the numbers by trial-and-error looking at the final output video.
+I searched the area 370<=y<656. For simplicity, the whole area was scanned for all the scales used, which were 1, 1.5, 2, 3.5 and 6, see [process_image()](vehicle_detection.py#L305-L328). This is probably not optimal for performance, but didn't seem to be the cause of much false positives at least. I started with the Fibonacci sequence since the golden ratio appears "everywhere" in nature, then I tweaked the numbers by trial-and-error looking at the final output video and processing the test images.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on four scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame shown below, the detected windows are processed multiple times in these test images to "heat up the heatmap", since the heatmap accumulates values over time when run on the video. Here are some example images:
+Ultimately I searched on five scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame shown below, the detected windows are processed multiple times in these test images to "heat up the heatmap", since the heatmap accumulates values over time when run on the video. Here are some example images:
 
-![alt text][image4]
+<img src="output_images/test1_windows.jpg" width="320" height="180">
+<img src="output_images/test3_windows.jpg" width="320" height="180"><br />
+<img src="output_images/test5_windows.jpg" width="320" height="180">
+<img src="output_images/test6_windows.jpg" width="320" height="180">
+
 ---
 
 ### Video Implementation

@@ -317,7 +317,7 @@ def process_image(original_img, svc, X_scaler, heat):
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
     add_heat(heat, all_scales_boxes)
-    heat = apply_threshold(heat, 2.5)  # *0.9: 1-2: too many false positives, 3: false negatives. 0.8: 2: fp(0.7,1.5,...) fp: 2(1,1.5,...)
+    heat = apply_threshold(heat, 2.5)
     heatmap = np.clip(heat, 0, 255)
     # Simple moving-average
     heat *= 0.8
