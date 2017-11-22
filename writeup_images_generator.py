@@ -4,17 +4,24 @@ import vehicle_detection as vd
 import glob
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-# from cStringIO import StringIO
 import io
 
 # Inputs
 cars = glob.glob('vehicles/*/*.png')
 notcars = glob.glob('non-vehicles/**/*.png')
+test1_f_name = 'test_images/test1.jpg'
+test3_f_name = 'test_images/test3.jpg'
+test5_f_name = 'test_images/test5.jpg'
+test6_f_name = 'test_images/test6.jpg'
 
 # Outputs, should all go into output_images directory
 sample_vehicle_f_name = 'output_images/sample_vehicle.jpg'
 sample_non_vehicle_f_name = 'output_images/sample_non_vehicle.jpg'
 hog_image_f_name = 'output_images/hog.jpg'
+test1_out_f_name = 'output_images/test1_windows.jpg'
+test3_out_f_name = 'output_images/test3_windows.jpg'
+test5_out_f_name = 'output_images/test5_windows.jpg'
+test6_out_f_name = 'output_images/test6_windows.jpg'
 
 # Same constants as in vehicle_detection.py
 orient = vd.orient
@@ -136,8 +143,27 @@ def hog_features(car, non_car):
     fig.savefig(hog_image_f_name)
 
 
+def sliding_window(input_f_name, output_f_name, svc, X_scaler):
+    image = mpimg.imread(input_f_name)
+    heat = vd.create_heatmap(image.shape)
+    # run several times to "warm up" the heat map, as if it was part of a video with similar frames before it
+    for _ in range(20):
+        draw_img = vd.process_image(image, svc, X_scaler, heat)
+    mpimg.imsave(output_f_name, draw_img)
+
+
+def sliding_window_all(svc, X_scaler):
+    sliding_window(test1_f_name, test1_out_f_name, svc, X_scaler)
+    sliding_window(test3_f_name, test3_out_f_name, svc, X_scaler)
+    sliding_window(test5_f_name, test5_out_f_name, svc, X_scaler)
+    sliding_window(test6_f_name, test6_out_f_name, svc, X_scaler)
+
+
 def main():
     vehicle_image, non_vehicle_image = sample_training_data()
     hog_features(vehicle_image, non_vehicle_image)
+
+    svc, X_scaler = vd.predict_cars()
+    sliding_window_all(svc, X_scaler)
 
 main()

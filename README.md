@@ -55,7 +55,7 @@ I tried various combinations of parameters but after selecting the YCrCb color s
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using `LinearSVC().fit(X_train, y_train)`, see [predict_cars()](vehicle_detection.py#L249-L255). As input (X_train) a subset of the the labelled vehicles (label=1) and non-vehicles (label=0) were used. Features used were (as described above) HOG features for all the channels plus spatial features plus color histograms. The feature extraction is performed in [extract_features()](vehicle_detection.py#L70-L123).
+I trained a linear SVM using `LinearSVC().fit(X_train, y_train)`, see [predict_cars()](vehicle_detection.py#L249-L255). As training data (X_train) and labels (y_train) a subset of the the labelled vehicles (label=1) and non-vehicles (label=0) were used. Features used were (as described above) HOG features for all the channels plus spatial features plus color histograms. The feature extraction is performed in [extract_features()](vehicle_detection.py#L70-L123).
 
 ### Sliding Window Search
 
@@ -65,7 +65,7 @@ I searched the area 370<=y<656. For simplicity, the whole area was scanned for a
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on four scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame, the detected windows are Here are some example images:
 
 ![alt text][image4]
 ---
