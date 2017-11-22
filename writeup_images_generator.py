@@ -147,9 +147,10 @@ def sliding_window(input_f_name, output_f_name, svc, X_scaler):
     image = mpimg.imread(input_f_name)
     heat = vd.create_heatmap(image.shape)
     # run several times to "warm up" the heat map, as if it was part of a video with similar frames before it
-    for _ in range(20):
+    for _ in range(10):
         draw_img = vd.process_image(image, svc, X_scaler, heat)
     mpimg.imsave(output_f_name, draw_img)
+    print('Sliding window image generated: ' + output_f_name)
 
 
 def sliding_window_all(svc, X_scaler):
@@ -161,9 +162,18 @@ def sliding_window_all(svc, X_scaler):
 
 def main():
     vehicle_image, non_vehicle_image = sample_training_data()
-    hog_features(vehicle_image, non_vehicle_image)
 
+    print('HOG features...')
+    hog_features(vehicle_image, non_vehicle_image)
+    print('HOG features done!')
+
+    print('Training...')
     svc, X_scaler = vd.predict_cars()
+    print('Training done!')
+
+    print('Sliding windows...')
     sliding_window_all(svc, X_scaler)
+    print('Sliding windows done!')
+
 
 main()

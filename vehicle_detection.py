@@ -309,7 +309,7 @@ def process_image(original_img, svc, X_scaler, heat):
     spatial_size = (32, 32)
     hist_bins = 32
     all_scales_boxes = []
-    for scale in [1.5, 2, 3.5, 6]:
+    for scale in [1.0, 1.5, 2, 3.5, 6]:
         box_list =\
             find_cars(original_img, ystart, ystop, scale, svc, X_scaler, orient,
                       pix_per_cell, cell_per_block, spatial_size, hist_bins)
@@ -317,10 +317,10 @@ def process_image(original_img, svc, X_scaler, heat):
 
     # Heatmap processing from "37. Multiple Detections & False Positives"
     add_heat(heat, all_scales_boxes)
-    heat = apply_threshold(heat, 3)
+    heat = apply_threshold(heat, 2.5)  # *0.9: 1-2: too many false positives, 3: false negatives. 0.8: 2: fp(0.7,1.5,...) fp: 2(1,1.5,...)
     heatmap = np.clip(heat, 0, 255)
     # Simple moving-average
-    heat *= 0.9
+    heat *= 0.8
 
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
