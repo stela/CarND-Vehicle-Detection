@@ -84,12 +84,11 @@ I recorded the positions of positive detections in each frame of the video (acro
 
 Here's an example result showing the heatmap from the test images, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the frame:
 
-### Here are four test images with bounding boxes and their corresponding heatmaps:
+### Here are four test images with heatmaps and their corresponding bounding boxes:
 <img src="output_images/heatmap1.jpg" width="427" height="240"><img src="output_images/test1_windows.jpg" width="427" height="240">
 <img src="output_images/heatmap3.jpg" width="427" height="240"><img src="output_images/test3_windows.jpg" width="427" height="240">
 <img src="output_images/heatmap5.jpg" width="427" height="240"><img src="output_images/test5_windows.jpg" width="427" height="240">
 <img src="output_images/heatmap6.jpg" width="427" height="240"><img src="output_images/test6_windows.jpg" width="427" height="240">
-
 
 
 ---
@@ -98,5 +97,6 @@ Here's an example result showing the heatmap from the test images, the result of
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
-
+After copy-pasting the code snippets from the course materials, the first stumbleblock was that I accidentally used different feature vectors for training and video frame processing. Total disaster ;-) Once I corrected that next problem was tuning the parameters. I ended up having either too many false positives or missing detections and "jittery" detections. Averaging the heatmaps across frames was required to resolve that. After further fine-tuning of the parameters I'm actually pretty happy with the output video.
+In order to improve, I believe it would be useful to use [spatial transformer networks](http://torch.ch/blog/2015/09/07/spatial_transformers.html) to pre-process both the vehicle images as well as finding the exact location and correct scaling on the video frames. This would probably be horribly slow but could improve performance a lot.
+The probably too simplistic averaging I did could be replaced with something smarter taking into account all the information in say the 10 most recent frames' heatmaps. Maybe that would result in better scores.
