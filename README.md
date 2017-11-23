@@ -61,7 +61,7 @@ I trained a linear SVM using `LinearSVC().fit(X_train, y_train)`, see [predict_c
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I searched the area 370<=y<656. For simplicity, the whole area was scanned for all the scales used, which were 1, 1.5, 2, 3.5 and 6, see [process_image()](vehicle_detection.py#L305-L328). This is probably not optimal for performance, but didn't seem to be the cause of much false positives at least. I started with the Fibonacci sequence since the golden ratio appears "everywhere" in nature, then I tweaked the numbers by trial-and-error looking at the final output video and processing the test images.
+I searched the area 370<=y<656. For simplicity, the whole area was scanned for all the scales used, which were 1, 1.5, 2, 3.5 and 6, see [process_image_internal()](vehicle_detection.py#L305-L328). This is probably not optimal for performance, but didn't seem to be the cause of much false positives at least. I started with the Fibonacci sequence since the golden ratio appears "everywhere" in nature, then I tweaked the numbers by trial-and-error looking at the final output video and processing the test images.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
@@ -98,5 +98,7 @@ Here's an example result showing the heatmap from the test images, the result of
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 After copy-pasting the code snippets from the course materials, the first stumbleblock was that I accidentally used different feature vectors for training and video frame processing. Total disaster ;-) Once I corrected that next problem was tuning the parameters. I ended up having either too many false positives or missing detections and "jittery" detections. Averaging the heatmaps across frames was required to resolve that. After further fine-tuning of the parameters I'm actually pretty happy with the output video.
+
 In order to improve, I believe it would be useful to use [spatial transformer networks](http://torch.ch/blog/2015/09/07/spatial_transformers.html) to pre-process both the vehicle images as well as finding the exact location and correct scaling on the video frames. This would probably be horribly slow but could improve performance a lot.
+
 The probably too simplistic averaging I did could be replaced with something smarter taking into account all the information in say the 10 most recent frames' heatmaps. Maybe that would result in better scores.
