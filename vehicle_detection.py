@@ -303,7 +303,7 @@ def draw_labeled_bboxes(img, labels):
 
 
 # Process each video frame
-def process_image(original_img, svc, X_scaler, heat):
+def process_image_internal(original_img, svc, X_scaler, heat):
     ystart = 370
     ystop = 656
     spatial_size = (32, 32)
@@ -325,6 +325,11 @@ def process_image(original_img, svc, X_scaler, heat):
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
+    return draw_img, heatmap
+
+# Process each video frame
+def process_image(original_img, svc, X_scaler, heat):
+    draw_img, heatmap = process_image_internal(original_img, svc, X_scaler, heat)
     return draw_img
 
 

@@ -4,7 +4,7 @@ import vehicle_detection as vd
 import glob
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-import io
+import matplotlib.cm as cm
 
 # Inputs
 cars = glob.glob('vehicles/*/*.png')
@@ -22,6 +22,10 @@ test1_out_f_name = 'output_images/test1_windows.jpg'
 test3_out_f_name = 'output_images/test3_windows.jpg'
 test5_out_f_name = 'output_images/test5_windows.jpg'
 test6_out_f_name = 'output_images/test6_windows.jpg'
+heatmap1_f_name = 'output_images/heatmap1.jpg'
+heatmap3_f_name = 'output_images/heatmap3.jpg'
+heatmap5_f_name = 'output_images/heatmap5.jpg'
+heatmap6_f_name = 'output_images/heatmap6.jpg'
 
 # Same constants as in vehicle_detection.py
 orient = vd.orient
@@ -143,21 +147,22 @@ def hog_features(car, non_car):
     fig.savefig(hog_image_f_name)
 
 
-def sliding_window(input_f_name, output_f_name, svc, X_scaler):
+def sliding_window(input_f_name, output_f_name, heatmap_f_name, svc, X_scaler):
     image = mpimg.imread(input_f_name)
     heat = vd.create_heatmap(image.shape)
     # run several times to "warm up" the heat map, as if it was part of a video with similar frames before it
     for _ in range(10):
-        draw_img = vd.process_image(image, svc, X_scaler, heat)
-    mpimg.imsave(output_f_name, draw_img)
+        draw_img, heatmap = vd.process_image_internal(image, svc, X_scaler, heat)
+    mpimg.imsave(output_f_name, draw_img, format='jpg')
+    mpimg.imsave(heatmap_f_name, heatmap, cmap=cm.Reds_r, format='jpg')
     print('Sliding window image generated: ' + output_f_name)
 
 
 def sliding_window_all(svc, X_scaler):
-    sliding_window(test1_f_name, test1_out_f_name, svc, X_scaler)
-    sliding_window(test3_f_name, test3_out_f_name, svc, X_scaler)
-    sliding_window(test5_f_name, test5_out_f_name, svc, X_scaler)
-    sliding_window(test6_f_name, test6_out_f_name, svc, X_scaler)
+    sliding_window(test1_f_name, test1_out_f_name, heatmap1_f_name, svc, X_scaler)
+    sliding_window(test3_f_name, test3_out_f_name, heatmap3_f_name, svc, X_scaler)
+    sliding_window(test5_f_name, test5_out_f_name, heatmap5_f_name, svc, X_scaler)
+    sliding_window(test6_f_name, test6_out_f_name, heatmap6_f_name, svc, X_scaler)
 
 
 def main():
@@ -171,9 +176,8 @@ def main():
     svc, X_scaler = vd.predict_cars()
     print('Training done!')
 
-    print('Sliding windows...')
+    print('Sliding windows and heatmaps...')
     sliding_window_all(svc, X_scaler)
     print('Sliding windows done!')
-
 
 main()

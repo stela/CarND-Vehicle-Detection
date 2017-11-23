@@ -65,7 +65,7 @@ I searched the area 370<=y<656. For simplicity, the whole area was scanned for a
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on five scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame shown below, the detected windows are processed multiple times in these test images to "warm up the heatmap", since the heatmap accumulates values over time when run on the video. Here are some example images:
+Ultimately I searched on five scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame shown below, the detected windows are processed multiple times in these test images to "warm up the heatmap", since the heatmap accumulates values over time when run on the video. I implemented a very basic moving average where for each video frame, the previous heatmap is added to and then I multiply each heatmap pixel with 0.8. Here are some example images:
 
 <img src="output_images/test1_windows.jpg" width="427" height="240"><img src="output_images/test3_windows.jpg" width="427" height="240">
 <img src="output_images/test5_windows.jpg" width="427" height="240"><img src="output_images/test6_windows.jpg" width="427" height="240">
@@ -75,24 +75,20 @@ Ultimately I searched on five scales using YCrCb 3-channel HOG features plus spa
 ### Video Implementation
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./output_images/project_video_out.mp4).
 
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+I recorded the positions of positive detections in each frame of the video (across all the scales).  From the positive detections I created a heatmap and accumulated it into the current/previous heatmap, see [add_heat()](vehicle_detection.py#L268-L277) and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap, see [process_image_internal()](vehicle_detection.py#L305-L328).  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+Here's an example result showing the heatmap from the test images, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the frame:
 
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+### Here are four test images with bounding boxes and their corresponding heatmaps:
+<img src="output_images/heatmap1.jpg" width="427" height="240"><img src="output_images/test1_windows.jpg" width="427" height="240">
+<img src="output_images/heatmap3.jpg" width="427" height="240"><img src="output_images/test3_windows.jpg" width="427" height="240">
+<img src="output_images/heatmap5.jpg" width="427" height="240"><img src="output_images/test5_windows.jpg" width="427" height="240">
+<img src="output_images/heatmap6.jpg" width="427" height="240"><img src="output_images/test6_windows.jpg" width="427" height="240">
 
 
 
