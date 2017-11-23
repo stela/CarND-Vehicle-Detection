@@ -67,8 +67,8 @@ I searched the area 370<=y<656. For simplicity, the whole area was scanned for a
 
 Ultimately I searched on five scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result. For each frame shown below, the detected windows are processed multiple times in these test images to "warm up the heatmap", since the heatmap accumulates values over time when run on the video. Here are some example images:
 
-<img src="output_images/test1_windows.jpg" width="320" height="180"><img src="output_images/test3_windows.jpg" width="320" height="180">
-<img src="output_images/test5_windows.jpg" width="320" height="180"><img src="output_images/test6_windows.jpg" width="320" height="180">
+<img src="output_images/test1_windows.jpg" width="427" height="240"><img src="output_images/test3_windows.jpg" width="427" height="240">
+<img src="output_images/test5_windows.jpg" width="427" height="240"><img src="output_images/test6_windows.jpg" width="427" height="240">
 
 ---
 
