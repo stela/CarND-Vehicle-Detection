@@ -263,6 +263,7 @@ def predict_cars():
     # np.logspace(-6,  0, 20) => C=0.0001623 & tol=0.0001 => score=0.9919
     # np.logspace(-5,  1, 40) => C=0.0002424 & tol=0.0001 => score=0.9919
     # np.logspace(-5, -2, 40) => C=0.0001425 & tol=0.0001 => score=0.9923
+    # np.logspace(-4, -3, 40) => C=0.0001914 & tol=0.0001 => score=0.9925
     c_s = np.logspace(-4, -3, 40)
     tol_list = [0.0001, 0.00001]
     n_jobs = 4  # I have a quad-core :-)
