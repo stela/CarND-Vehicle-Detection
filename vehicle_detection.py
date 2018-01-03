@@ -5,7 +5,7 @@ from functools import partial
 import glob
 import time
 import matplotlib.image as mpimg
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from skimage.feature import hog
@@ -257,11 +257,29 @@ def predict_cars():
     print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
     # Check the prediction time for a single sample
     t = time.time()
+
+    # Optimize classifier hyperparameters, re-init classifier (takes about 2 minutes w 10 steps...)
+    # np.logspace(-6, -1, 10) => C=0.0001668 => score=0.9923986
+    # np.logspace(-6,  0, 20) => C=0.0001623 & tol=0.0001 => score=0.9919
+    # np.logspace(-5,  1, 40) => C=0.0002424 & tol=0.0001 => score=0.9919
+    # np.logspace(-5, -2, 40) => C=0.0001425 & tol=0.0001 => score=0.9923
+    c_s = np.logspace(-4, -3, 40)
+    tol_list = [0.0001, 0.00001]
+    n_jobs = 4  # I have a quad-core :-)
+    clf = GridSearchCV(estimator=svc, param_grid=dict(C=c_s, tol=tol_list), n_jobs=n_jobs)
+    clf.fit(X_train, y_train)
+    print('Classifier best score: ', clf.best_score_)
+    print('Classifier best estimator: ', clf.best_estimator_)
+    svc = clf.best_estimator_
+    svc.fit(X_train, y_train)
+    print('Test Accuracy of SVC, optimized = ', round(svc.score(X_test, y_test), 4))
+
+    # Continue with optimized classifier
     n_predict = 10
     print('My SVC predicts: ', svc.predict(X_test[0:n_predict]))
     print('For these', n_predict, 'labels: ', y_test[0:n_predict])
     t2 = time.time()
-    print(round(t2 - t, 5), 'Seconds to predict', n_predict, 'labels with SVC')
+    print(round(t2 - t, 5), 'Seconds to optimize and predict', n_predict, 'labels with SVC')
     return svc, X_scaler
 
 
@@ -326,6 +344,7 @@ def process_image_internal(original_img, svc, X_scaler, heat):
     draw_img = draw_labeled_bboxes(np.copy(original_img), labels)
 
     return draw_img, heatmap
+
 
 # Process each video frame
 def process_image(original_img, svc, X_scaler, heat):
